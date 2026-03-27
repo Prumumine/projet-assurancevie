@@ -15,9 +15,14 @@ AS
 BEGIN
     -- Vérification RBAC
     IF p_id_user_app IS NOT NULL THEN
+    BEGIN
         SELECT ROLE INTO v_role
         FROM UTILISATEUR
         WHERE ID_UTILISATEUR = p_id_user_app;
+        EXCEPTION
+            WHEN NO_DATA_FOUND THEN
+                RAISE_APPLICATION_ERROR(-20002,'Utilisateur inexistant');
+        END;
 
         IF v_role NOT IN ('GESTIONNAIRE','ADMIN') THEN
             RAISE_APPLICATION_ERROR(-20001,'Permission refusée');

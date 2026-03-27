@@ -1,0 +1,10 @@
+-- Trigger de vérification du paiement
+CREATE OR REPLACE TRIGGER TRG_VERIF_PAIEMENT
+BEFORE INSERT OR UPDATE ON PAIEMENT
+FOR EACH ROW
+BEGIN
+    IF :NEW.MONTANT <= 0 THEN
+        RAISE_APPLICATION_ERROR(-20002, 'Montant paiement invalide');
+    END IF;
+END;
+/

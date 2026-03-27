@@ -1,0 +1,36 @@
+-- 🧹 NETTOYAGE + TEST COMPLÈT Supprimer_Client
+
+-- 1. Nettoyer données existantes (sûr)
+DELETE FROM CLIENT WHERE NUMERO_IDENTITE LIKE 'CNI-100%';
+DELETE FROM UTILISATEUR WHERE EMAIL LIKE '%@test.com';
+COMMIT;
+
+-- 2. Réinsérer données fraîches
+@@ajout_utilisateur_app.sql
+@@ajout_client_test_data.sql
+
+-- 3. VÉRIFIER IDs réels créés
+PROMPT '=== VÉRIFICATION IDs ===';
+SELECT 'USER GESTIONNAIRE:' as INFO, ID_UTILISATEUR, ROLE FROM UTILISATEUR WHERE ROLE='GESTIONNAIRE';
+SELECT 'CLIENT BOUGMA:' as INFO, ID_CLIENT, NOM FROM CLIENT WHERE NOM='BOUGMA';
+COMMIT;
+
+-- 4. Test procédure
+SET SERVEROUTPUT ON;
+PROMPT '=== TEST SUPPRIMER_CLIENT ===';
+DECLARE
+    v_user_id NUMBER := (SELECT ID_UTILISATEUR FROM UTILISATEUR WHERE ROLE='GESTIONNAIRE');
+    v_client_id NUMBER := (SELECT ID_CLIENT FROM CLIENT WHERE NOM='BOUGMA');
+BEGIN
+    Supprimer_Client(p_id_user_app => v_user_id, p_id_client => v_client_id);
+    DBMS_OUTPUT.PUT_LINE('✅ TEST SUCCÈS: Client supprimé');
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE('❌ TEST ÉCHEC: '||SQLERRM);
+END;
+/
+
+-- 5. Vérification finale
+PROMPT '=== VÉRIFICATION FINALE ===';
+SELECT 'BOUGMA supprimé ✓' as STATUS FROM DUAL 
+WHERE NOT EXISTS (SELECT 1 FROM CLIENT WHERE NOM='BOUGMA');

@@ -1,0 +1,3 @@
+-- Attribuer le rôle DBA
+GRANT DBA TO ADMIN;
+GRANT DBA TO APP_CLIENT;

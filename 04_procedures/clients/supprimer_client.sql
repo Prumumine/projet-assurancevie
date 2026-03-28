@@ -45,8 +45,11 @@ BEGIN
     END IF;
 
     -- Suppression
-    DELETE FROM CLIENT
+     UPDATE CLIENT
+    SET DELETED_AT = SYSDATE,
+        UPDATED_AT = SYSDATE
     WHERE ID_CLIENT = p_id_client;
+
 
 EXCEPTION
     WHEN OTHERS THEN

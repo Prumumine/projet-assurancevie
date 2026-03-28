@@ -1,6 +1,6 @@
 SET SERVEROUTPUT ON;
 -----------------------------
--- PROCÉDURE SUPPRIMER_CLIENT CORRIGÉE
+-- PROCÉDURE SUPPRIMER_AGENT CORRIGÉE (soft-delete, trigger gère audit)
 -----------------------------
 CREATE OR REPLACE PROCEDURE Supprimer_Agent(
     p_id_user_app IN NUMBER DEFAULT NULL,
@@ -26,7 +26,7 @@ BEGIN
         END IF;
     END IF;
 
-    -- Vérifier que le client existe
+    -- Vérifier que l'agent existe
     SELECT COUNT(*) INTO v_count
     FROM AGENT_COMMERCIAL
     WHERE ID_AGENT = p_id_agent;
@@ -44,8 +44,10 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20004,'Impossible de supprimer : Agent lié à des souscriptions');
     END IF;
 
-    -- Suppression
-    DELETE FROM AGENT_COMMERCIAL
+    -- Soft-delete
+    UPDATE AGENT_COMMERCIAL
+    SET DELETED_AT = SYSDATE,
+        UPDATED_AT = SYSDATE
     WHERE ID_AGENT = p_id_agent;
 
 EXCEPTION

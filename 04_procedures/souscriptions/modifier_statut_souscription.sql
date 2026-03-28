@@ -1,7 +1,7 @@
 CREATE OR REPLACE PROCEDURE Modifier_Statut_Souscription(
     p_id_user_app IN NUMBER DEFAULT NULL,
     p_id_souscription IN NUMBER,
-    p_statut IN VARCHAR2
+    p_statut IN VARCHAR2 DEFAULT NULL
 )
 AS
     v_role VARCHAR2(20);
@@ -34,7 +34,8 @@ BEGIN
 
     -- Modification
     UPDATE SOUSCRIPTION
-    SET STATUT = p_statut
+    SET STATUT = NVL(p_statut, STATUT),
+        UPDATED_AT = SYSDATE
     WHERE ID_SOUSCRIPTION = p_id_souscription;
 
 EXCEPTION

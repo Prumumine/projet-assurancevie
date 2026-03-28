@@ -1,7 +1,7 @@
 CREATE OR REPLACE PROCEDURE Modifier_Statut_Paiement(
     p_id_user_app IN NUMBER DEFAULT NULL,
     p_id_paiement IN NUMBER,
-    p_statut IN VARCHAR2
+    p_statut IN VARCHAR2 DEFAULT 'EN_ATTENTE'
 )
 AS
     v_role VARCHAR2(20);
@@ -34,7 +34,8 @@ BEGIN
 
     -- Modification
     UPDATE PAIEMENT
-    SET STATUT = p_statut
+    SET STATUT = NVL(p_statut, STATUT),
+        UPDATED_AT = SYSDATE
     WHERE ID_PAIEMENT = p_id_paiement;
 
 EXCEPTION

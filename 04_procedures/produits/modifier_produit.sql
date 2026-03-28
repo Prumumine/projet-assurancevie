@@ -1,12 +1,12 @@
 CREATE OR REPLACE PROCEDURE Modifier_Produit(
     p_id_user_app IN NUMBER DEFAULT NULL,
     p_id_produit IN NUMBER,
-    p_nom_produit IN VARCHAR2,
-    p_description IN VARCHAR2,
-    p_type_produit IN VARCHAR2,
-    p_montant_min IN NUMBER,
-    p_taux_commission IN NUMBER
-   
+    p_nom_produit IN VARCHAR2 DEFAULT NULL,
+    p_description IN VARCHAR2 DEFAULT NULL,
+    p_type_produit IN VARCHAR2 DEFAULT NULL,
+    p_montant_min IN NUMBER DEFAULT NULL,
+    p_taux_commission IN NUMBER DEFAULT NULL
+ 
 )
 AS
     v_role VARCHAR2(20);
@@ -39,11 +39,12 @@ BEGIN
 
     -- Modification
     UPDATE PRODUIT
-    SET NOM_PRODUIT = p_nom_produit,
-        DESCRIPTION = p_description,
-        TYPE_PRODUIT = p_type_produit,
-        MONTANT_MIN = p_montant_min,
-        TAUX_COMMISSION = p_taux_commission
+    SET NOM_PRODUIT = NVL(p_nom_produit, NOM_PRODUIT),
+        DESCRIPTION = NVL(p_description, DESCRIPTION),
+        TYPE_PRODUIT = NVL(p_type_produit, TYPE_PRODUIT),
+        MONTANT_MIN = NVL(p_montant_min, MONTANT_MIN),
+        TAUX_COMMISSION = NVL(p_taux_commission, TAUX_COMMISSION),
+        UPDATED_AT = SYSDATE
     WHERE ID_PRODUIT = p_id_produit;
 
 EXCEPTION

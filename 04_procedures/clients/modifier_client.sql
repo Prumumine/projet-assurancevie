@@ -1,13 +1,13 @@
 CREATE OR REPLACE PROCEDURE Modifier_Client(
     p_id_user_app IN NUMBER DEFAULT NULL,
     p_id_client IN NUMBER,
-    p_numero_identite IN VARCHAR2,
-    p_nom IN VARCHAR2,
-    p_prenom IN VARCHAR2,
-    p_date_naissance IN DATE,
-    p_telephone IN VARCHAR2,
-    p_adresse IN VARCHAR2,
-    p_profession IN VARCHAR2
+    p_numero_identite IN VARCHAR2 DEFAULT NULL,
+    p_nom IN VARCHAR2 DEFAULT NULL,
+    p_prenom IN VARCHAR2 DEFAULT NULL,
+    p_date_naissance IN DATE DEFAULT NULL,
+    p_telephone IN VARCHAR2 DEFAULT NULL,
+    p_adresse IN VARCHAR2 DEFAULT NULL,
+    p_profession IN VARCHAR2 DEFAULT NULL
 )
 AS
     v_role VARCHAR2(20);
@@ -40,13 +40,14 @@ BEGIN
 
     -- Modification
     UPDATE CLIENT
-    SET NUMERO_IDENTITE = p_numero_identite,
-        NOM = p_nom,
-        PRENOM = p_prenom,
-        DATE_NAISSANCE = p_date_naissance,
-        TELEPHONE = p_telephone,
-        ADRESSE = p_adresse,
-        PROFESSION = p_profession
+    SET NUMERO_IDENTITE = NVL(p_numero_identite, NUMERO_IDENTITE),
+        NOM = NVL(p_nom, NOM),
+        PRENOM = NVL(p_prenom, PRENOM),
+        DATE_NAISSANCE = NVL(p_date_naissance, DATE_NAISSANCE),
+        TELEPHONE = NVL(p_telephone, TELEPHONE),
+        ADRESSE = NVL(p_adresse, ADRESSE),
+        PROFESSION = NVL(p_profession, PROFESSION),
+        UPDATED_AT = SYSDATE
     WHERE ID_CLIENT = p_id_client;
 
 EXCEPTION

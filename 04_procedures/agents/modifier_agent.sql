@@ -1,11 +1,11 @@
 CREATE OR REPLACE PROCEDURE Modifier_Agent(
     p_id_user_app IN NUMBER DEFAULT NULL,
     p_id_agent IN NUMBER,
-    p_numero_matricule IN VARCHAR2,
-    p_nom IN VARCHAR2,
-    p_prenom IN VARCHAR2,
-    p_telephone IN VARCHAR2,
-    p_date_embauche IN DATE
+    p_numero_matricule IN VARCHAR2 DEFAULT NULL,
+    p_nom IN VARCHAR2 DEFAULT NULL,
+    p_prenom IN VARCHAR2 DEFAULT NULL,
+    p_telephone IN VARCHAR2 DEFAULT NULL,
+    p_date_embauche IN DATE DEFAULT NULL
 )
 AS
     v_role VARCHAR2(20);
@@ -38,11 +38,12 @@ BEGIN
 
     -- Modification
     UPDATE AGENT_COMMERCIAL
-    SET NUMERO_MATRICULE = p_numero_matricule,
-        NOM = p_nom,
-        PRENOM = p_prenom,
-        TELEPHONE = p_telephone,
-        DATE_EMBAUCHE = p_date_embauche
+    SET NUMERO_MATRICULE = NVL(p_numero_matricule, NUMERO_MATRICULE),
+        NOM = NVL(p_nom, NOM),
+        PRENOM = NVL(p_prenom, PRENOM),
+        TELEPHONE = NVL(p_telephone, TELEPHONE),
+        DATE_EMBAUCHE = NVL(p_date_embauche, DATE_EMBAUCHE),
+        UPDATED_AT = SYSDATE
     WHERE ID_AGENT = p_id_agent;
 
 EXCEPTION

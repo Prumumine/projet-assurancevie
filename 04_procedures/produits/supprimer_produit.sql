@@ -45,8 +45,11 @@ BEGIN
     END IF;
 
     -- Suppression
-    DELETE FROM PRODUIT
+    UPDATE PRODUIT
+    SET DELETED_AT = SYSDATE,
+        UPDATED_AT = SYSDATE
     WHERE ID_PRODUIT = p_id_produit;
+
 
 EXCEPTION
     WHEN OTHERS THEN

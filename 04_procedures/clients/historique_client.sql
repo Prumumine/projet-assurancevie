@@ -1,33 +1,36 @@
 CREATE OR REPLACE PROCEDURE Historique_Client (
-    p_id_client IN NUMBER
+    p_session_user IN VARCHAR2
 )
 AS
+    v_id_client NUMBER;
+    v_role      VARCHAR2(30);
 BEGIN
+    SELECT client_id, role_name
+    INTO v_id_client, v_role
+    FROM APP_USERS
+    WHERE username = p_session_user;
+
     FOR rec IN (
-        SELECT 
-            c.NOM || ' ' || c.PRENOM AS CLIENT,
-            c.TELEPHONE,
-            s.ID_SOUSCRIPTION,
-            p.NOM_PRODUIT,
-            a.NOM || ' ' || a.PRENOM AS AGENT,
-            s.STATUT,
-            s.MONTANT_PRIME
-        FROM SOUSCRIPTION s
-        JOIN CLIENT c ON s.ID_CLIENT = c.ID_CLIENT
-        JOIN PRODUIT p ON s.ID_PRODUIT = p.ID_PRODUIT
-        JOIN AGENT_COMMERCIAL a ON s.ID_AGENT = a.ID_AGENT
-        WHERE s.ID_CLIENT = p_id_client
+        SELECT *
+        FROM V_HISTO_CLIENT
+        WHERE 
+            (v_role = 'ROLE_CLIENT' AND ID_CLIENT = v_id_client)
+
+            OR
+
+            (v_role = 'ROLE_AGENT' AND ID_CLIENT IN (
+                SELECT DISTINCT ID_CLIENT
+                FROM SOUSCRIPTION
+                WHERE ID_AGENT = v_id_client
+            ))
+
+            OR
+
+            (v_role = 'ROLE_GESTIONNAIRE')
     )
     LOOP
-        DBMS_OUTPUT.PUT_LINE(
-            'Client: '||rec.CLIENT||
-            ' | Tel: '||rec.TELEPHONE||
-            ' | Souscription: '||rec.ID_SOUSCRIPTION||
-            ' | Produit: '||rec.NOM_PRODUIT||
-            ' | Agent: '||rec.AGENT||
-            ' | Statut: '||rec.STATUT||
-            ' | Prime: '||rec.MONTANT_PRIME
-        );
+        DBMS_OUTPUT.PUT_LINE(rec.CLIENT || ' | ' || rec.NOM_PRODUIT);
     END LOOP;
+
 END;
 /

@@ -1,12 +1,10 @@
-to# Security Tests via Global Wrapper (CLIENT unauthorized)
+# TODO: Adapt Tests to RBAC Model (2 cases: non-authorized ❌, authorized ✅)
 
-## Steps:
-- [x] 1. Agents category: test_supprimer_agent.sql, test_performance_agent.sql, test_portefeuille_agent.sql, test_modifier_agent_security.sql
-- [x] 2. Clients category: 4 tests
-- [x] 3. Produits: 3 tests
-- [x] 4. Souscriptions: 4 tests
-- [x] 5. Paiements: 3 tests
-- [x] 6. Commissions: 1 test
-- [x] 7. Complete, summary
+## Plan Progress
+- [x] All core tests adapted ✅
+- [x] Step 6: commissions/ ✅
+- [x] Step 7: wrappers/ ✅
+- [ ] Step 8: Verify with sqlplus runs.
 
-Current: Step 1
+All tests now follow the strict 2-case model. Ready for testing/completion.
+

@@ -1,22 +1,21 @@
-CREATE OR REPLACE PROCEDURE Generer_Rapport_Performance_Agents (
-    p_date_debut IN DATE,
-    p_date_fin   IN DATE
-)
+CREATE OR REPLACE PROCEDURE Generer_Rapport_Performance_Agents
 AS
 BEGIN
     FOR rec IN (
-        SELECT a.NOM, a.PRENOM,
-               SUM(c.MONTANT) AS TOTAL_COMMISSION
-        FROM COMMISSION c
-        JOIN AGENT_COMMERCIAL a ON c.ID_AGENT = a.ID_AGENT
-        WHERE c.DATE_CALCUL BETWEEN p_date_debut AND p_date_fin
-        GROUP BY a.NOM, a.PRENOM
-        ORDER BY TOTAL_COMMISSION DESC
+        SELECT CODE_AGENT,
+               NOM,
+               PRENOM,
+               NB_VENTES,
+               CHIFFRE_AFFAIRE
+        FROM V_PERFORMANCE_AGENT
+        ORDER BY CHIFFRE_AFFAIRE DESC
     )
     LOOP
         DBMS_OUTPUT.PUT_LINE(
-            rec.NOM||' '||rec.PRENOM||
-            ' -> Commission: '||rec.TOTAL_COMMISSION
+            'Agent : ' || rec.CODE_AGENT || ' - ' ||
+            rec.NOM || ' ' || rec.PRENOM ||
+            ' | Ventes : ' || rec.NB_VENTES ||
+            ' | Chiffre : ' || rec.CHIFFRE_AFFAIRE
         );
     END LOOP;
 END;

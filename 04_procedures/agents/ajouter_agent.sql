@@ -9,7 +9,7 @@ CREATE OR REPLACE PROCEDURE Ajouter_Agent(
 AS
     v_role VARCHAR2(20);
 BEGIN
-    -- Vérification RBAC
+    -- Vérification RBAC csi y a application frontend associer 
     IF p_id_user_app IS NOT NULL THEN
         BEGIN
             SELECT ROLE INTO v_role
@@ -25,7 +25,7 @@ BEGIN
         END IF;
     END IF;
 
-    -- Insertion agent
+    -- Insertion agent pour le cas ou la procedure est executé directement dans oracle sans passer par le frontend (RBAC skipped)
     INSERT INTO AGENT_COMMERCIAL(NUMERO_MATRICULE, NOM, PRENOM,TELEPHONE, DATE_EMBAUCHE)
     VALUES(p_numero_matricule, p_nom, p_prenom, p_telephone, p_date_embauche);
 
@@ -35,3 +35,5 @@ EXCEPTION
         RAISE_APPLICATION_ERROR(-20003,'Erreur lors de l''ajout du agent: ' || SQLERRM);
 END;
 /
+
+

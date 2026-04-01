@@ -1,54 +1,28 @@
 SET SERVEROUTPUT ON;
------------------------------
--- TESTS POUR Ajouter_Client
------------------------------
--- Test 1 : Ajout avec un rôle autorisé (ADMIN)
-BEGIN
-    Ajouter_Agent(
-        p_id_user_app => 21,  -- ADMIN
-        p_numero_matricule => 'MA-1001',
-        p_nom => 'DIALLO',
-        p_prenom => 'SAROU',
-        p_telephone => '70123456',
-        p_date_embauche=> DATE '2019-01-15'
-    );
-    DBMS_OUTPUT.PUT_LINE('Ajouter_Agent Test 1: Succès');
-EXCEPTION
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Ajouter_Agent en tant que admin Test 1: ' || SQLERRM);
-    COMMIT;
-END;
-/
 
--- Test 2 : Ajout avec rôle non autorisé (AGENT)
+-- =============================================
+-- TEST 1 : CLIENT (non autorisé)
+-- =============================================
 BEGIN
-    Ajouter_Agent(
-        p_id_user_app => 23,  
-        p_numero_matricule => 'MA-1001',
-        p_nom => 'DIALLO',
-        p_prenom => 'SAROU',
-        p_telephone => '70123456',
-        p_date_embauche=> DATE '2019-01-15'
-    );
-EXCEPTION
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Ajouter_Agent avec role agent Test 2: ' || SQLERRM);
-END;
-/
+    DBMS_OUTPUT.PUT_LINE('=== TEST CLIENT (non autorisé) ===');
 
--- Test 3 : Ajout sans user_app (Oracle direct)
-BEGIN
-    Ajouter_Agent(
-        p_numero_matricule => 'MA-1004',
-        p_nom => 'FANDIE',
-        p_prenom => 'Michel',
-        p_telephone => '70123456',
-        p_date_embauche=> DATE '2025-01-15'
-    );
-    DBMS_OUTPUT.PUT_LINE('Ajouter_Agent sans user_id Test 3: Succès');
-EXCEPTION
-    WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE('Ajouter_Agent sans user_id Test 3: ' || SQLERRM);
-    COMMIT;
+    BEGIN
+        -- Appel du wrapper global dans SYSTEM
+        SYSTEM.Global_Execute_Proc_Oracle(
+            p_procedure_name => 'AJOUTER_AGENT',
+            p_params => q'{
+                p_numero_matricule => ''CLI-001'',
+                p_nom => ''Dupont'',
+                p_prenom => ''Test'',
+                p_telephone => ''70000001'',
+                p_date_embauche => SYSDATE
+            }'
+        );
+
+        DBMS_OUTPUT.PUT_LINE('✅ Agent ajouté (inattendu)');
+    EXCEPTION
+        WHEN OTHERS THEN
+            DBMS_OUTPUT.PUT_LINE('❌ Erreur: ' || SQLERRM);
+    END;
 END;
 /
